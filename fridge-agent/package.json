@@ -1,7 +1,21 @@
 {
   "dependencies": {
+    "@aptos-labs/ts-sdk": "^5.1.0",
+    "@google/generative-ai": "^0.24.1",
     "aptos": "^1.21.0",
     "dotenv": "^17.2.2",
     "express": "^5.1.0"
-  }
+  },
+  "name": "fridge-agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }
