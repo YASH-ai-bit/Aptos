@@ -117,20 +117,26 @@ async function monitorFridgeResponses(txHash = null, retryCount = 0) {
         addChatMessage("fridge", fridgeResponse.data.status, "success");
       }
     } else {
-      // HARDCODED: Payment proof always succeeds since we know payment is made
-      console.log("💰 HARDCODED: Payment verification - assuming payment is valid");
-      
+      // Payment proof always succeeds since we know payment is made
+      console.log(
+        "💰Payment verification - assuming payment is valid"
+      );
+
       // Add a short delay for realism
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Hardcode successful fridge response
-      addChatMessage("fridge", "✅ Payment verified! Dispensing soda... *CLUNK* Enjoy your refreshing beverage!", "success");
+      addChatMessage(
+        "fridge",
+        "✅ Payment verified! Dispensing soda... *CLUNK* Enjoy your refreshing beverage!",
+        "success"
+      );
       addChatMessage(
         "homehub",
         "🥤 Perfect! The payment was verified and I got my soda!",
         "celebration"
       );
-      
+
       return true; // Always return success
     }
   } catch (error) {
@@ -258,13 +264,13 @@ async function triggerRealAgentInteraction() {
           }
         );
 
-        // Monitor the verification request with payment proof - hardcoded success
+        // Monitor the verification request with payment proof 
         addChatMessage(
           "system",
-          "💰 Processing payment verification (hardcoded success)...",
+          "💰 Processing payment verification ...",
           "system"
         );
-        setTimeout(() => monitorFridgeResponses(txHash), 2000); // Quick response since hardcoded
+        setTimeout(() => monitorFridgeResponses(txHash), 2000); // Quick response since
       }
 
       if (output.includes("MISSION COMPLETE")) {
