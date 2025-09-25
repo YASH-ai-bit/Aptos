@@ -223,15 +223,275 @@ cd chat-demo && npm test
 4. **🔗 Verify**: Show transaction on Aptos Explorer
 5. **🎉 Conclusion**: "Fully autonomous, real blockchain, AI-to-AI commerce!"
 
-## 📈 What's Next
+**🚀 Ready to demonstrate the future of AI commerce?**  
+**Start the system and click "Start Soda Request"!** 🥤
 
-Future enhancements:
+## 💻 Code Architecture Deep Dive
 
-- 🌍 **Multi-chain Support**: Ethereum, Solana integration
-- 🏪 **Agent Marketplace**: Discover and connect to agent services
-- 📊 **Analytics Dashboard**: Payment volume, success rates, performance metrics
-- 🔒 **Enhanced Security**: Multi-signature, fraud detection
-- 🎮 **Gamification**: Agent reputation, rewards, achievement systems
+### 🎭 Chat Demo (`chat-demo/`)
+
+The real-time visualization system that orchestrates and displays agent interactions:
+
+#### **server.js** - Core Orchestration Engine
+
+```javascript
+// Real-time WebSocket server for agent communication
+const io = socketIO(server);
+
+// Key Functions:
+async function triggerRealAgentInteraction() {
+  // Spawns actual HomeHub agent as child process
+  const homehubProcess = spawn("node", ["index.js"], {
+    cwd: "/home/yash/aptos-x402/homehub-agent",
+  });
+
+  // Captures and parses agent output in real-time
+  homehubProcess.stdout.on("data", (data) => {
+    // Extract transaction hashes, payment events, AI decisions
+    if (output.includes("payment was successful")) {
+      const txHash = output.match(/Transaction hash: (0x[a-fA-F0-9]+)/)[1];
+      // Triggers payment verification flow
+      setTimeout(() => monitorFridgeResponses(txHash), 2000);
+    }
+  });
+}
+
+// Hardcoded payment verification for demo reliability
+async function monitorFridgeResponses(txHash) {
+  // Demo-optimized: Always shows successful payment verification
+  addChatMessage(
+    "fridge",
+    "✅ Payment verified! Dispensing soda...",
+    "success"
+  );
+  return true; // Ensures smooth demo flow
+}
+```
+
+#### **public/index.html** - Interactive UI
+
+```javascript
+// Real-time chat interface with Socket.IO
+socket.on("new_message", function (message) {
+  // Dynamic message rendering with agent avatars
+  const messageDiv = createMessageElement(message);
+  // Smooth animations and visual feedback
+  messagesContainer.appendChild(messageDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+});
+
+// Agent status monitoring
+socket.on("agent_status", function (status) {
+  // Live indicators for agent health
+  updateAgentStatus("fridge", status.fridge.online);
+  updateAgentStatus("homehub", status.homehub.online);
+});
+```
+
+### 🤖 HomeHub Agent (`homehub-agent/`)
+
+The autonomous buyer agent with AI decision-making:
+
+#### **index.js** - AI-Powered Commerce Logic
+
+```javascript
+// Google Gemini AI integration for decision making
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+
+async function makeIntelligentRequest() {
+  // AI analyzes service requests and pricing
+  const prompt =
+    "Analyze this service request and decide if the price is fair...";
+  const result = await model.generateContent(prompt);
+
+  // Autonomous payment decision
+  if (shouldPay) {
+    await makePayment(recipientAddress, amountInOctas);
+  }
+}
+
+// Blockchain payment execution
+async function makePayment(recipient, amount) {
+  const transaction = await aptos.transaction.build.simple({
+    sender: account.accountAddress,
+    data: {
+      function: "0x1::coin::transfer",
+      typeArguments: ["0x1::aptos_coin::AptosCoin"],
+      functionArguments: [recipient, amount],
+    },
+  });
+
+  // Wait for blockchain confirmation
+  const pendingTxn = await aptos.signAndSubmitTransaction({
+    signer: account,
+    transaction,
+  });
+  return await aptos.waitForTransaction({ transactionHash: pendingTxn.hash });
+}
+```
+
+### ❄️ Fridge Agent (`fridge-agent/`)
+
+The payment-gated service provider:
+
+#### **index.js** - HTTP 402 Payment Gateway
+
+```javascript
+// Payment-required endpoint with blockchain verification
+app.get("/api/dispense/soda", async (req, res) => {
+  const paymentProof = req.headers["x-payment-proof"];
+
+  if (!paymentProof) {
+    // HTTP 402 Payment Required response
+    return res.status(402).json({
+      message: "Payment required for soda service",
+      price: "0.1 APT",
+      recipient: account.accountAddress.toString(),
+    });
+  }
+
+  // Blockchain transaction verification
+  try {
+    const transaction = await aptos.getTransactionByHash({
+      transactionHash: paymentProof,
+    });
+
+    if (isValidPayment(transaction)) {
+      // AI-generated success response
+      const response = await generateAIResponse(
+        "Payment verified, dispensing soda"
+      );
+      res.json({ status: response });
+    }
+  } catch (error) {
+    res.status(400).json({ error: "Payment verification failed" });
+  }
+});
+
+// AI response generation with Google Gemini
+async function generateAIResponse(context) {
+  const prompt = `Generate a friendly response for: ${context}`;
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}
+```
+
+## 🔮 Future of the Project
+
+### 🚀 Phase 2: Enhanced AI Commerce (Q4 2025)
+
+#### **Multi-Agent Marketplace**
+
+- **Agent Discovery**: Directory of available AI services
+- **Dynamic Pricing**: AI-negotiated prices based on demand/supply
+- **Service Categories**: Expand beyond vending to data, compute, storage
+- **Reputation System**: Agent ratings and trust scores
+
+#### **Advanced AI Capabilities**
+
+- **Contract Negotiation**: Agents negotiate terms, conditions, SLAs
+- **Market Analysis**: AI predicts optimal pricing strategies
+- **Resource Optimization**: Intelligent load balancing across services
+- **Learning Systems**: Agents improve from transaction history
+
+### 🌍 Phase 3: Multi-Chain Ecosystem (Q1 2026)
+
+#### **Cross-Chain Integration**
+
+```javascript
+// Future: Multi-chain payment support
+const supportedChains = {
+  aptos: { native: "APT", bridge: "LayerZero" },
+  ethereum: { native: "ETH", bridge: "Wormhole" },
+  solana: { native: "SOL", bridge: "Allbridge" },
+};
+
+async function crossChainPayment(chain, amount) {
+  // Automatic chain selection and bridging
+  const optimalRoute = await findOptimalRoute(chain, amount);
+  return await executeCrossChainTx(optimalRoute);
+}
+```
+
+#### **Interoperability Features**
+
+- **Universal Payment Protocol**: Accept payments from any blockchain
+- **Cross-Chain State Sync**: Maintain agent reputation across chains
+- **Bridge Optimization**: Minimize fees and confirmation times
+- **Chain-Agnostic APIs**: Abstract blockchain complexity from agents
+
+### 🏗️ Phase 4: Enterprise & Infrastructure (Q2 2026)
+
+#### **Production-Ready Features**
+
+- **High Availability**: Load balancing, failover, redundancy
+- **Enterprise Security**: Multi-sig wallets, hardware security modules
+- **Compliance Tools**: KYC/AML for regulated industries
+- **API Rate Limiting**: DDoS protection and fair usage policies
+
+#### **Developer Ecosystem**
+
+```javascript
+// Future: Agent SDK for easy integration
+import { AgentSDK, PaymentGateway } from "@aptos-x402/sdk";
+
+const myAgent = new AgentSDK({
+  name: "WeatherAgent",
+  services: ["current-weather", "forecast"],
+  pricing: { "current-weather": "0.01 APT" },
+});
+
+// One-line payment integration
+myAgent.enablePayments(PaymentGateway.X402);
+```
+
+### 🎯 Phase 5: Autonomous Economy (Q3 2026)
+
+#### **Self-Sustaining Agent Networks**
+
+- **Agent Spawning**: Successful agents create child agents
+- **Resource Trading**: Agents buy/sell compute, storage, bandwidth
+- **Economic Incentives**: Reward mechanisms for network participation
+- **Governance Systems**: Decentralized agent network governance
+
+#### **Real-World Integration**
+
+- **IoT Mesh Networks**: Smart cities with agent-to-agent commerce
+- **Supply Chain**: Autonomous procurement and logistics
+- **Financial Services**: AI-driven lending, insurance, investments
+- **Content Creation**: Agents commissioning work from other agents
+
+### 🔬 Research & Innovation Roadmap
+
+#### **Technical Breakthroughs**
+
+1. **Zero-Knowledge Payments**: Privacy-preserving transactions
+2. **Quantum-Resistant Security**: Future-proof cryptography
+3. **AI-Optimized Blockchains**: Chains designed for agent commerce
+4. **Neural Payment Routing**: ML-optimized transaction paths
+
+#### **Economic Models**
+
+1. **Agent Basic Income**: Network rewards for participation
+2. **Compute Marketplaces**: Decentralized cloud computing
+3. **Data Monetization**: Agents selling insights and analytics
+4. **Autonomous Organizations**: Fully AI-governed entities
+
+### 💡 Impact Projections
+
+#### **By 2027: The Agent Economy**
+
+- **$1B+ in AI-to-AI Transactions**: Autonomous commerce at scale
+- **10M+ Active Agents**: Diverse ecosystem of AI services
+- **100+ Integrated Blockchains**: Universal payment infrastructure
+- **New Economic Primitives**: Business models impossible without AI agents
+
+#### **Societal Transformation**
+
+- **Reduced Transaction Costs**: Near-zero friction commerce
+- **24/7 Global Markets**: Always-on autonomous trading
+- **Personalized Services**: AI agents tailored to individual needs
+- **Economic Accessibility**: Global participation regardless of location
 
 ## 🤝 Contributing
 
@@ -255,149 +515,3 @@ MIT License - Build the future of autonomous AI commerce!
 - 💬 **Agent Communication**: Natural language AI interaction
 - 🎨 **Professional UI**: Presentation-ready interface
 - 🔄 **End-to-End Flow**: Complete commerce cycle in under 30 seconds
-
-**🚀 Ready to demonstrate the future of AI commerce?**  
-**Start the system and click "Start Soda Request"!** 🥤
-
-## 📋 Components
-
-### 🤖 HomeHub Agent (`homehub-agent/`)
-
-**The AI Buyer** - An autonomous client that:
-
-- Makes intelligent requests for services
-- Handles HTTP 402 payment challenges automatically
-- Uses blockchain to send micropayments
-- Leverages AI to make purchasing decisions
-- Retries requests with payment proofs
-
-### ❄️ Fridge Agent (`fridge-agent/`)
-
-**The AI Seller** - A smart API service that:
-
-- Requires payment before delivering services
-- Verifies blockchain transactions automatically
-- Generates AI-powered responses
-- Implements proper x402 protocol flow
-- Guards premium content behind payments
-
-### 🖥️ Web UI (`web-ui/`)
-
-**Real-time Visualization** - Modern interface featuring:
-
-- Live chat between agents
-- Payment flow visualization
-- Transaction tracking
-- Manual testing controls
-- Beautiful, responsive design
-
-## 🔄 x402 Protocol Flow
-
-```mermaid
-sequenceDiagram
-    participant H as HomeHub Agent
-    participant F as Fridge Agent
-    participant B as Aptos Blockchain
-    participant U as Web UI
-
-    H->>F: 1. Request service
-    F->>H: 2. HTTP 402 Payment Required
-    H->>B: 3. Send payment transaction
-    B-->>H: 4. Payment confirmed
-    H->>F: 5. Retry with payment proof
-    F->>B: 6. Verify payment
-    B-->>F: 7. Payment verified
-    F->>H: 8. Service delivered
-
-    Note over U: All steps visualized in real-time
-```
-
-## 🛠️ Technology Stack
-
-- **Blockchain**: Aptos SDK v5.1.0 (Devnet)
-- **AI**: Google Generative AI (Gemini)
-- **Backend**: Node.js, Express.js
-- **Frontend**: React 19, Vite 7
-- **Real-time**: Socket.IO
-- **Styling**: Modern CSS with gradients
-- **Icons**: Lucide React
-
-## 💡 Use Cases
-
-This demo showcases potential applications:
-
-1. **IoT Device Payments**: Smart home devices paying for cloud services
-2. **API Micropayments**: Per-request API billing with instant settlement
-3. **Content Monetization**: AI-generated content behind micropayments
-4. **Service Meshes**: Microservices charging each other automatically
-5. **AI-to-AI Commerce**: Autonomous agents conducting business
-
-## 🔧 Development & Testing
-
-### Running Individual Components:
-
-```bash
-# Fridge Agent (Seller Service)
-cd fridge-agent && npm start
-
-# HomeHub Agent (Buyer Client)
-cd homehub-agent && node index.js
-
-# Chat Demo UI (Visualization)
-cd chat-demo && npm start
-```
-
-### Direct API Testing:
-
-```bash
-# Test Fridge Agent without payment (expects 402)
-curl http://localhost:3000/api/dispense/soda
-
-# Test Fridge Agent with payment proof (expects 200)
-curl -H "X-Payment-Proof: 0xTX_HASH..." http://localhost:3000/api/dispense/soda
-```
-
-### Integration Testing:
-
-1. **Automated Flow**: Use Chat Demo UI's "Start Soda Request" button
-2. **Manual Trigger**: Run HomeHub Agent directly to see terminal output
-3. **API Monitoring**: Watch Chat Demo for real-time agent communication
-4. **Blockchain Verification**: Check transactions on Aptos Explorer
-
-### Development Mode:
-
-```bash
-# Auto-restart on file changes
-cd chat-demo && npm run dev
-```
-
-## 🌐 Network Configuration
-
-Currently configured for Aptos **Devnet**:
-
-- Network: https://fullnode.devnet.aptoslabs.com/v1
-- Faucet: https://faucet.devnet.aptoslabs.com
-- Explorer: https://explorer.aptoslabs.com/?network=devnet
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branches
-3. Test with the UI system
-4. Submit pull requests
-
-## 📜 License
-
-MIT License - Build the future of AI commerce!
-
----
-
-**🎯 Perfect for demonstrating:**
-
-- Autonomous AI decision-making
-- Blockchain micropayments
-- Real-time agent communication
-- Modern web interfaces
-- x402 protocol implementation
-
-_Ready to watch AI agents trade with each other? Start the system and click "Start x402 Flow"!_ 🚀
