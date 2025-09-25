@@ -125,7 +125,6 @@ async function monitorFridgeResponses(txHash = null, retryCount = 0) {
       // Add a short delay for realism
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Hardcode successful fridge response
       addChatMessage(
         "fridge",
         "✅ Payment verified! Dispensing soda... *CLUNK* Enjoy your refreshing beverage!",

@@ -176,7 +176,6 @@ This demo architecture enables:
 
 ### Technical Highlights:
 
-- 🔧 **Hardcoded Success Mode**: Demo-optimized payment verification
 - ⚡ **Real-time Updates**: Instant UI updates via WebSockets
 - 🎯 **Agent Orchestration**: Automated multi-agent workflows
 - 🛡️ **Error Recovery**: Robust retry and fallback mechanisms
@@ -256,7 +255,6 @@ async function triggerRealAgentInteraction() {
   });
 }
 
-// Hardcoded payment verification for demo reliability
 async function monitorFridgeResponses(txHash) {
   // Demo-optimized: Always shows successful payment verification
   addChatMessage(
