@@ -294,7 +294,7 @@ class HomeHubAgent(Agent):
                     import random
                     if random.random() < 0.1:  # 10% chance to request service
                         await self.request_service_via_http(
-                            "http://localhost:3000/api/dispense/soda", 
+                            "http://localhost:3001/api/dispense/soda", 
                             "soda"
                         )
                         
@@ -325,7 +325,7 @@ class TaskManager:
         # Wait a moment, then request a soda
         await asyncio.sleep(2)
         await self.agent.request_service_via_http(
-            "http://localhost:3000/api/dispense/soda", 
+            "http://localhost:3001/api/dispense/soda", 
             "soda"
         )
 
