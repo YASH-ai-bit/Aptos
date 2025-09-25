@@ -82,7 +82,7 @@ class Agent:
         self.logger.info(f"Sending {message_type} to {recipient_id}")
         return message
 
-# Real Blockchain Integration (using Aptos SDK)
+# Blockchain Integration (using your Aptos setup)
 class AptosPaymentService:
     """Service for handling Aptos blockchain payments"""
     
@@ -91,69 +91,13 @@ class AptosPaymentService:
         self.service_price = 0.1  # APT
         self.seller_address = os.getenv("SELLER_ADDRESS")
         
-        # Initialize Aptos client
-        try:
-            # Try to import and use Aptos Python SDK
-            import requests
-            if network == "devnet":
-                self.base_url = "https://fullnode.devnet.aptoslabs.com/v1"
-            elif network == "testnet":
-                self.base_url = "https://fullnode.testnet.aptoslabs.com/v1"
-            else:
-                self.base_url = "https://fullnode.mainnet.aptoslabs.com/v1"
-            self.logger = logging.getLogger("AptosPaymentService")
-            self.logger.info(f"✅ Aptos client initialized for {network}")
-        except ImportError:
-            self.logger.error("❌ Requests not available")
-            self.base_url = None
-        
     async def verify_payment(self, tx_hash: str) -> bool:
         """Verify payment transaction on Aptos blockchain"""
-        if not self.client:
-            self.logger.warning("⚠️ No Aptos client - using simulation mode")
-            # Fallback simulation for demo
-            return tx_hash and tx_hash.startswith("0x") and len(tx_hash) > 10
-            
-        try:
-            self.logger.info(f"🔍 Verifying transaction: {tx_hash}")
-            
-            # Get transaction from blockchain
-            transaction = self.client.get_transaction_by_hash(tx_hash)
-            
-            if not transaction.get("success", False):
-                self.logger.error("❌ Transaction was not successful")
-                return False
-                
-            # Check if it's a transfer transaction
-            payload = transaction.get("payload", {})
-            if payload.get("function") != "0x1::aptos_account::transfer":
-                self.logger.error("❌ Not a transfer transaction")
-                return False
-            
-            # Verify recipient and amount
-            arguments = payload.get("arguments", [])
-            if len(arguments) < 2:
-                self.logger.error("❌ Invalid transaction arguments")
-                return False
-                
-            recipient = arguments[0]
-            amount = int(arguments[1])
-            expected_amount = int(self.service_price * 10**8)  # Convert to octas
-            
-            if recipient != self.seller_address:
-                self.logger.error(f"❌ Wrong recipient: {recipient} != {self.seller_address}")
-                return False
-                
-            if amount < expected_amount:
-                self.logger.error(f"❌ Insufficient amount: {amount} < {expected_amount}")
-                return False
-            
-            self.logger.info("✅ Payment verification successful!")
+        # This would integrate with Aptos SDK
+        # For demo purposes, we'll simulate verification
+        if tx_hash and tx_hash.startswith("0x") and len(tx_hash) > 10:
             return True
-            
-        except Exception as e:
-            self.logger.error(f"❌ Payment verification failed: {e}")
-            return False
+        return False
         
     def get_payment_info(self) -> Dict[str, Any]:
         return {
@@ -169,33 +113,10 @@ class AIResponseService:
     
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
-        self.logger = logging.getLogger("AIResponseService")
-        
-        # Initialize Google Gemini
-        try:
-            if self.api_key:
-                import google.generativeai as genai
-                genai.configure(api_key=self.api_key)
-                self.model = genai.GenerativeModel('gemini-pro')
-                self.logger.info("✅ Google Gemini AI initialized")
-            else:
-                self.logger.warning("⚠️ No GEMINI_API_KEY - using fallback responses")
-                self.model = None
-        except ImportError:
-            self.logger.error("❌ Google Generative AI not installed")
-            self.model = None
         
     async def generate_payment_request(self, price: float) -> str:
         """Generate AI-powered payment request message"""
-        if self.model and self.api_key:
-            try:
-                prompt = f"You are an AI for a smart fridge. A client agent wants a soda but hasn't paid. Politely ask them to pay {price} APT."
-                response = await asyncio.to_thread(self.model.generate_content, prompt)
-                return response.text.strip()
-            except Exception as e:
-                self.logger.error(f"❌ AI generation failed: {e}")
-        
-        # Fallback responses
+        # In a real implementation, this would call Google Gemini API
         responses = [
             f"🤖 Hey there! I'd love to help you with that soda, but I need a payment of {price} APT first. Thanks!",
             f"💰 Payment required: {price} APT for your refreshing soda. Please complete the payment to proceed!",
@@ -205,15 +126,6 @@ class AIResponseService:
         
     async def generate_success_message(self) -> str:
         """Generate AI-powered success message"""
-        if self.model and self.api_key:
-            try:
-                prompt = "You are an AI for a smart fridge. A client agent just successfully paid for a soda. Give them a short, fun confirmation message. It's a warm evening here in Haryana, India."
-                response = await asyncio.to_thread(self.model.generate_content, prompt)
-                return response.text.strip()
-            except Exception as e:
-                self.logger.error(f"❌ AI generation failed: {e}")
-        
-        # Fallback responses
         responses = [
             "🎉 Payment verified! Here's your ice-cold soda. Enjoy this refreshing treat!",
             "✅ Soda dispensed successfully! Stay hydrated and have a great day!",
