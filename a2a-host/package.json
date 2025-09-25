@@ -1,0 +1,29 @@
+{
+  "name": "a2a-host-agent",
+  "version": "1.0.0",
+  "description": "Host Agent for Agent-to-Agent Communication - based on agent2agent pattern",
+  "main": "host-agent.js",
+  "scripts": {
+    "start": "node launcher.js",
+    "host": "node host-agent.js",
+    "dev": "nodemon launcher.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1",
+    "axios": "^1.12.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "keywords": [
+    "agent2agent",
+    "a2a",
+    "host-agent",
+    "orchestration",
+    "websocket",
+    "real-time"
+  ],
+  "author": "YASH-ai-bit",
+  "license": "MIT"
+}
